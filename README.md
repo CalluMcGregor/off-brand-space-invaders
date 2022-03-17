@@ -4,7 +4,5 @@ My first on-going project, creating an "off-brand" version of the classic arcade
 
 GAME WILL ENTER FULL-SCREEN, close the game by pressing 'q'. 
 Current controls are:
-Left and Right arrow keys for movement
-Spacebar to shoot
-
-END
+Left and Right arrow keys for movement.
+Spacebar to shoot.
