@@ -1,4 +1,4 @@
-# off-brand-space-invaders
+# off-brand-space-invaders-WIP
 READ ME
 My first on-going project, creating an "off-brand" version of the classic arcade game, Space Invaders!
 
