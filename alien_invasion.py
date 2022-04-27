@@ -1,7 +1,8 @@
 import sys
-from time import sleep
 import pygame
+import json
 
+from time import sleep
 from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
@@ -139,6 +140,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -151,6 +153,12 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
+
+    def _save_high_score(self):
+        """write the high_score to a file to save it"""
+        filename = 'high_score.json'
+        with open(filename, 'w') as f:
+            json.dump(self.stats.high_score, f)
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
