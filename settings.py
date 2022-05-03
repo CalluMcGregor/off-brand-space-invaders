@@ -5,21 +5,21 @@ class Settings:
         """initialise the game's settings"""
         #screen settings
         self.screen_width = 1200
-        self.screen_height = 700
-        self.bg_colour = (230, 230, 230)
+        self.screen_height = 800
+        self.bg_colour = (57, 99, 87)
 
         #ship Settings
-        self.ship_limit = 0
+        self.ship_limit = 2
 
         #bullet Settings
-        self.bullet_width = 3
+        self.bullet_width = 5
         self.bullet_height = 15
-        self.bullet_colour = (60, 60, 60)
+        self.bullet_colour = (52, 235, 58)
         self.bullets_allowed = 3
 
         #Alien Settings
         #the amount of pixels the ship will drop upon hitting an edge
-        self.fleet_drop_speed = 10
+        self.fleet_drop_speed = 100
 
         #how quickly the game speeds up
         self.speedup_scale = 1.2
@@ -36,7 +36,7 @@ class Settings:
         if self.difficulty_level == 'easy':
             self.ship_limit = 2
             self.bullets_allowed = 6
-            self.ship_speed = 0.75
+            self.ship_speed = 1
             self.bullet_speed = 1.5
             self.alien_speed = 0.3
         elif self.difficulty_level == 'medium':

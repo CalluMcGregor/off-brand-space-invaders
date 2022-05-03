@@ -15,12 +15,15 @@ class Scoreboard:
         self.stats = ai_game.stats
 
         #font settings for scoring information
-        self.text_colour = (30, 30, 30)
-        self.font = pygame.font.SysFont(None, 48)
-        self.level_font = pygame.font.SysFont(None, 32)
+        self.text_colour = (252, 211, 157)
+        self.font = pygame.font.Font('invasion.ttf', 44)
+        self.level_font = pygame.font.Font('invasion.ttf', 32)
 
-        #prepare the initial score images; regular and high score
-        #and prepare current level
+        #call for the prep of the different images
+        self.prep_images()
+
+    def prep_images(self):
+        """prepare score, highscore, current level, and ships remaining"""
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
@@ -36,8 +39,8 @@ class Scoreboard:
 
         #display the score at the top right of the screen
         self.score_rect = self.score_image.get_rect()
-        self.score_rect.right = self.screen_rect.right - 20
-        self.score_rect.top = 20
+        self.score_rect.left = self.screen_rect.left + 20
+        self.score_rect.top = 5
 
     def prep_high_score(self):
         """turn the highscore into a rendered image"""
@@ -67,16 +70,17 @@ class Scoreboard:
 
         #position the level below the score
         self.level_rect = self.level_image.get_rect()
-        self.level_rect.right = self.score_rect.right
-        self.level_rect.top = self.score_rect.bottom + 10
+        self.level_rect.left = self.score_rect.left
+        self.level_rect.top = self.score_rect.bottom
 
     def prep_ships(self):
         """show how many ships are left"""
         self.ships = Group()
-        for ship_number in range(self.stats.ships_left):
+        for ship_number in range(self.stats.ships_left + 1):
             ship = Ship(self.ai_game)
-            ship.rect.x = 10 + ship_number * ship.rect.width
-            ship.rect.y = 10
+            ship.rect.x = (self.settings.screen_width - ship.rect.width -
+                            ship_number * ship.rect.width - 10)
+            ship.rect.y = 5
             self.ships.add(ship)
 
     def show_score(self):

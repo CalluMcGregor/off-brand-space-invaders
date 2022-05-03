@@ -3,6 +3,8 @@ import pygame
 import json
 
 from time import sleep
+from pygame import mixer
+
 from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
@@ -10,6 +12,7 @@ from button import Button
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from soundfx import Sounds
 
 class AlienInvasion:
     """Overall class to manage game assets and behaviour"""
@@ -23,6 +26,7 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
+        self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Alien Invasion")
 
         #create an instance to store game statistics,
@@ -31,6 +35,7 @@ class AlienInvasion:
         self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
+        self.sounds = Sounds()
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
@@ -50,15 +55,16 @@ class AlienInvasion:
 
         #position buttons so they don't overlap
         self.easy_button.rect.top = (
-            self.play_button.rect.top + 1.5*self.play_button.rect.height)
+            self.play_button.rect.top + 1.5 * self.play_button.rect.height)
+        self.easy_button.rect.right = self.play_button.rect.left - 20
         self.easy_button._update_msg_position()
 
-        self.medium_button.rect.top = (
-            self.easy_button.rect.top + 1.5*self.easy_button.rect.height)
+        self.medium_button.rect.top = self.easy_button.rect.top
+        self.medium_button.rect.left = self.play_button.rect.left
         self.medium_button._update_msg_position()
 
-        self.hard_button.rect.top = (
-            self.medium_button.rect.top + 1.5*self.medium_button.rect.height)
+        self.hard_button.rect.top = self.medium_button.rect.top
+        self.hard_button.rect.left = self.play_button.rect.right + 20
         self.hard_button._update_msg_position()
 
     def run_game(self):
@@ -91,9 +97,10 @@ class AlienInvasion:
                 self._check_difficulty_buttons(mouse_pos)
 
     def _check_play_button(self, mouse_pos):
-        """start a new game when the player clicks play"""
+        """start a new game and music when the player clicks play"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
+            self.sounds._play_soundtrack()
             self._start_game()
 
     def _start_game(self):
@@ -104,13 +111,10 @@ class AlienInvasion:
         #reset game stats
         self.stats.reset_stats()
         self.stats.game_active = True
-        self.sb.prep_score()
-        self.sb.prep_level()
-        self.sb.prep_ships()
+        self.sb.prep_images()
 
         #get rid of any remaining aliens and bullets
-        self.aliens.empty()
-        self.bullets.empty()
+        self._empty_bullets_aliens()
 
         #create a new fleet and center the ship
         self._create_fleet()
@@ -118,6 +122,11 @@ class AlienInvasion:
 
         #hide the mouse cursor
         pygame.mouse.set_visible(False)
+
+    def _empty_bullets_aliens(self):
+        """empty bullets and alien groups"""
+        self.aliens.empty()
+        self.bullets.empty()
 
     def _check_difficulty_buttons(self, mouse_pos):
         """set the appropriate difficulty level"""
@@ -143,7 +152,10 @@ class AlienInvasion:
             self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            if self.stats.game_active:
+                if len(self.bullets) < self.settings.bullets_allowed:
+                    self._fire_bullet()
+                    self.sounds._laser_sound()
         elif event.key == pygame.K_p and not self.stats.game_active:
             self._start_game()
 
@@ -162,9 +174,8 @@ class AlienInvasion:
 
     def _fire_bullet(self):
         """create a new bullet and add it to the bullets group"""
-        if len(self.bullets) < self.settings.bullets_allowed:
-            new_bullet = Bullet(self)
-            self.bullets.add(new_bullet)
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
 
     def _update_bullets(self):
         """update position of bullets and get rid of old bullets"""
@@ -187,18 +198,45 @@ class AlienInvasion:
         if collisions:
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
+                self.sounds._explosion_sound()
             self.sb.prep_score()
             self.sb.check_high_score()
 
-        if not self.aliens:
-            #destroy existing bullets and create the new fleet
-            self.bullets.empty()
-            self._create_fleet()
-            self.settings.increase_speed()
+        if len(self.aliens) == 0:
+            self.start_new_level()
 
-            #increase level
-            self.stats.level += 1
-            self.sb.prep_level()
+    def start_new_level(self):
+        """start a new level of aliens"""
+        #destroy existing bullets and create the new fleet
+        self.bullets.empty()
+        self._create_fleet()
+        self.settings.increase_speed()
+
+        #increase level
+        self.stats.level += 1
+        self.sb.prep_level()
+
+        #change the music speed depending on the level
+        self._speed_up_music()
+
+    def _speed_up_music(self):
+        """speed up the music"""
+        if self.stats.level >= 2:
+            self.sounds.faster_1()
+        if self.stats.level >= 3:
+            self.sounds.faster_2()
+        if self.stats.level >= 4:
+            self.sounds.faster_3()
+        if self.stats.level >= 5:
+            self.sounds.fast_4()
+        if self.stats.level >= 6:
+            self.sounds.faster_5()
+        if self.stats.level >= 7:
+            self.sounds.faster_6()
+        if self.stats.level >= 8:
+            self.sounds.faster_7()
+        if self.stats.level >= 9:
+            self.sounds.faster_8()
 
     def _update_aliens(self):
         """check if the fleet is at an edge, then update all alien positions"""
@@ -214,9 +252,8 @@ class AlienInvasion:
 
     def _check_aliens_bottom(self):
         """check if any aliens have reached the bottom of the screen"""
-        screen_rect = self.screen.get_rect()
         for alien in self.aliens.sprites():
-            if alien.rect.bottom >= screen_rect.bottom:
+            if alien.rect.bottom >= self.screen_rect.bottom:
                 #treat same as if ship hit
                 self._ship_hit()
                 break
@@ -230,8 +267,7 @@ class AlienInvasion:
             self.sb.prep_ships()
 
             #remove any remaining aliens and bullets
-            self.aliens.empty()
-            self.bullets.empty()
+            self._empty_bullets_aliens()
 
             #create a new fleet and centre the ship
             self._create_fleet()
@@ -255,7 +291,7 @@ class AlienInvasion:
         #determine the number of rows of aliens that fit on screen
         ship_height = self.ship.rect.height
         available_space_y = (self.settings.screen_height -
-            (5 * alien_height) - ship_height)
+            (3 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         #create the full fleet of aliens

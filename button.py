@@ -8,14 +8,15 @@ class Button:
         self.screen_rect = self.screen.get_rect()
 
         #set the dimensions and properties of the button
-        self.width, self.height = 200, 62
-        self.button_colour = (60, 214, 245)
-        self.text_colour = (205, 156, 59)
-        self.font = pygame.font.SysFont(None, 60)
+        self.width, self.height = 200, 50
+        self.button_colour = 252, 211, 157
+        self.text_colour = 0, 0, 0
+        self.font = pygame.font.Font('invasion.ttf', 36)
 
         #build the buttons rect attribute and centre it
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
+        self.rect.centery = self.screen_rect.centery + 120
 
         #the button message needs to be prepped once
         self._prep_msg(msg)
