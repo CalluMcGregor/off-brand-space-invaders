@@ -17,9 +17,15 @@ class Settings:
         self.bullet_colour = (52, 235, 58)
         self.bullets_allowed = 3
 
+        #alien missile settings
+        self.missile_width = 3
+        self.missile_height = 12
+        self.missile_colour = (250, 248, 247)
+        self.missiles_allowed = 3
+
         #Alien Settings
         #the amount of pixels the ship will drop upon hitting an edge
-        self.fleet_drop_speed = 100
+        self.fleet_drop_speed = 10
 
         #how quickly the game speeds up
         self.speedup_scale = 1.2
@@ -38,19 +44,22 @@ class Settings:
             self.bullets_allowed = 6
             self.ship_speed = 1
             self.bullet_speed = 1.5
-            self.alien_speed = 0.3
+            self.alien_speed = 0.8
+            self.missile_speed = 0.8
         elif self.difficulty_level == 'medium':
             self.ship_limit = 1
             self.bullets_allowed = 4
             self.ship_speed = 1.5
             self.bullet_speed = 2.2
-            self.alien_speed = 0.6
+            self.alien_speed = 1.2
+            self.missile_speed = 1.2
         elif self.difficulty_level == 'hard':
             self.ship_limit = 0
             self.bullets_allowed = 3
             self.ship_speed = 3
             self.bullet_speed = 3.0
-            self.alien_speed = 1.2
+            self.alien_speed = 2.0
+            self.missile_speed = 1.6
 
         #fleet direction 1 = right, -1 = left
         self.fleet_direction = 1
@@ -63,13 +72,14 @@ class Settings:
         self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
+        self.missile_speed *= self.speedup_scale
 
         self.alien_points = int(self.alien_points * self.score_scale)
 
     def set_difficulty(self, diff_setting):
         """set the difficulty setting"""
         if diff_setting == 'easy':
-            print('easy')
+            pass
         elif diff_setting == 'medium':
             pass
         elif diff_setting == 'hard':

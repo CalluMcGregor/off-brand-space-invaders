@@ -15,11 +15,23 @@ class Sounds:
         laser.set_volume(0.1)
         pygame.mixer.Sound.play(laser)
 
+    def _select_sound(self):
+        """play a menu selection sound"""
+        select = pygame.mixer.Sound("sounds/select.wav")
+        select.set_volume(0.3)
+        pygame.mixer.Sound.play(select)
+
     def _explosion_sound(self):
         """play an explosion sound"""
         explosion = pygame.mixer.Sound("sounds/explosion.wav")
         explosion.set_volume(0.2)
         pygame.mixer.Sound.play(explosion)
+
+    def _ship_explosion_sound(self):
+        """explosion of the ship"""
+        ship_explosion = pygame.mixer.Sound("sounds/ship_explosion.wav")
+        ship_explosion.set_volume(0.4)
+        pygame.mixer.Sound.play(ship_explosion)
 
     def _play_soundtrack(self):
         """play the games soundtrack"""
@@ -59,27 +71,6 @@ class Sounds:
         """play the games soundtrack, much faster"""
         self._stop_unloader()
         pygame.mixer.music.load("sounds/soundtrack25.wav")
-        self.music_volume
-        pygame.mixer.music.play(-1)
-
-    def faster_6(self):
-        """play the games soundtrack, way faster"""
-        self._stop_unloader()
-        pygame.mixer.music.load("sounds/soundtrack35.wav")
-        self.music_volume
-        pygame.mixer.music.play(-1)
-
-    def faster_7(self):
-        """play the games soundtrack, super fast"""
-        self._stop_unloader()
-        pygame.mixer.music.load("sounds/soundtrack50.wav")
-        self.music_volume
-        pygame.mixer.music.play(-1)
-
-    def faster_8(self):
-        """play the games soundtrack, ultra fast"""
-        self._stop_unloader()
-        pygame.mixer.music.load("sounds/soundtrack65.wav")
         self.music_volume
         pygame.mixer.music.play(-1)
 

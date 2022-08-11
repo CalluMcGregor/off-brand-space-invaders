@@ -19,6 +19,10 @@ class Scoreboard:
         self.font = pygame.font.Font('invasion.ttf', 44)
         self.level_font = pygame.font.Font('invasion.ttf', 32)
 
+        #font settings for quit prompt
+        self.prompt_colour = (250, 248, 247)
+        self.prompt_font = pygame.font.Font('invasion.ttf', 24)
+
         #call for the prep of the different images
         self.prep_images()
 
@@ -28,6 +32,7 @@ class Scoreboard:
         self.prep_high_score()
         self.prep_level()
         self.prep_ships()
+        self.prep_quit_reminder()
 
     def prep_score(self):
         """turn the score into a rendered image"""
@@ -83,9 +88,21 @@ class Scoreboard:
             ship.rect.y = 5
             self.ships.add(ship)
 
-    def show_score(self):
+    def prep_quit_reminder(self):
+        """remind players how they can quit, using 'Q'"""
+        quit_prompt = "Press 'Q' or 'q' to quit!"
+        self.quit_image = self.prompt_font.render(quit_prompt, True,
+                self.prompt_colour, self.settings.bg_colour)
+
+        #position in the bottom right
+        self.quit_rect = self.quit_image.get_rect()
+        self.quit_rect.bottom = self.screen_rect.bottom - 10
+        self.quit_rect.right = self.screen_rect.right - 10
+
+    def show_information(self):
         """draw scores, level, and ships to the screen"""
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+        self.screen.blit(self.quit_image, self.quit_rect)
         self.ships.draw(self.screen)
